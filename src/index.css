@@ -5,3 +5,16 @@ body,
   height: 100%;
   font-family: sans-serif;
 }
+
+.light-green {
+  background-color: #00ca80;
+  color: white;
+}
+.light-green:hover {
+  background-color: #00b072;
+  color: white;
+}
+
+.bg-gray-light {
+  background-color: #f7f8fc;
+}

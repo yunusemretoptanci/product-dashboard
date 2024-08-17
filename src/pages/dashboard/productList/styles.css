@@ -1,0 +1,18 @@
+/* styles.css */
+
+/* Remove borders from table headers and cells */
+.table td {
+  border: none;
+}
+.table th {
+ min-width: 110px;
+}
+
+
+/* Apply background color to odd rows */
+
+.table-striped>tbody>tr:nth-child(odd)>td, 
+.table-striped>tbody>tr:nth-child(odd)>th {
+   background-color: #f7f8fc; 
+   --bs-table-bg-type: striped;
+ }
