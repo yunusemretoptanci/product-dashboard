@@ -4,20 +4,23 @@ import RegisterPage from "./pages/authentication/register/RegisterPage";
 import ProductList from "./pages/dashboard/productList/ProductList";
 import ProductDetail from "./pages/dashboard/productDetail/ProductDetail";
 import AuthenticatedLayout from "./layouts/AuthenticatedLayout";
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<LoginPage />} />
 
-        <Route path="/dashboard" element={<AuthenticatedLayout />}>
-          <Route path="register" element={<RegisterPage />} />
-          <Route path="product-list" element={<ProductList />} />
-          <Route path="product-detail" element={<ProductDetail />} />
-        </Route>
-      </Routes>
-    </Router>
+          <Route path="/dashboard" element={<AuthenticatedLayout />}>
+            <Route path="register" element={<RegisterPage />} />
+            <Route path="product-list" element={<ProductList />} />
+            <Route path="product-detail" element={<ProductDetail />} />
+          </Route>
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 
