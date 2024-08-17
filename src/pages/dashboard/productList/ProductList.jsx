@@ -1,5 +1,5 @@
 // components/ProductList.js
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { useTable, useGlobalFilter, useSortBy } from "react-table";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchProducts, deleteProduct } from "@/redux/productSlice"; // Path to your productSlice
@@ -13,14 +13,20 @@ import {
 } from "react-bootstrap-icons";
 import "./styles.css";
 import Spinner from "../../../components/Spinner";
+import DeleteModal from "../../../components/DeleteModal";
 
 const ProductList = () => {
   const dispatch = useDispatch();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [productId, setProductId] = useState(null);
+  const toggleDeleteModal = (id) => {
+    setProductId(id);
+    setShowDeleteModal(!showDeleteModal);
+  };
   const { products, loading, error, actionType } = useSelector(
     (state) => state.products
   );
 
-  // Fetch products on component mount
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
@@ -67,7 +73,9 @@ const ProductList = () => {
           </button>
           <button
             className="btn btn-danger"
-            onClick={() => handleDelete(row.original.id)}
+            onClick={() => {
+              toggleDeleteModal(row.original.id);
+            }}
           >
             <TrashFill />
           </button>
@@ -169,6 +177,13 @@ const ProductList = () => {
           </tbody>
         </table>
       </div>
+      <DeleteModal
+        show={showDeleteModal}
+        loading={actionType === "delete" && loading}
+        handleDelete={handleDelete}
+        cancel={toggleDeleteModal}
+        productId={productId}
+      />
     </>
   );
 };
