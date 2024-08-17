@@ -6,9 +6,9 @@ function LoginPage() {
   const { loginWithRedirect } = useAuth0();
 
   return (
-    <div className="bg-light d-flex flex-column align-items-center justify-content-center row">
-      <div className="d-flex flex-column justify-content-center align-items-center gap-3 col-4">
-        <div className="d-flex justify-content-center align-items-center gap-5 ">
+    <div className="bg-light d-flex flex-column align-items-center justify-content-center ">
+      <div className="d-flex flex-column justify-content-center align-items-center gap-3  ">
+        <div className="d-flex  gap-5 ">
           <img
             src={ila_logo}
             alt="ila_logo"
@@ -17,13 +17,19 @@ function LoginPage() {
           />
           <h1 className="m-auto h1">IlaShop</h1>
         </div>
-        <p className=" fs-5 text-dark">Fast & Easy Product Management</p>
+        <p className="fs-5 text-dark">Fast & Easy Product Management</p>
 
-        <div className="col-12 text-center p-3 shadow-sm  rounded bg-white">
+        <div className="text-center p-4 shadow-sm  rounded bg-white ">
           <h2 className="mb-4 fs-3">Welcome!</h2>
+          <p className="fs-5 text-muted">
+            Please login to manage your products
+          </p>
           <button
-          onClick={() => loginWithRedirect()}
-          className="btn btn btn-dark btn-lg">Login</button>
+            onClick={() => loginWithRedirect()}
+            className="btn btn btn-dark btn-lg mt-4 w-100"
+          >
+            Login
+          </button>
         </div>
       </div>
     </div>
