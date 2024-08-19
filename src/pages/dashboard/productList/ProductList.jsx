@@ -14,15 +14,10 @@ import {
 import "./styles.css";
 import Spinner from "../../../components/Spinner";
 import DeleteModal from "../../../components/DeleteModal";
+import UpdateProductModal from "../../../components/ProductFormModal";
 
 const ProductList = () => {
   const dispatch = useDispatch();
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [productId, setProductId] = useState(null);
-  const toggleDeleteModal = (id) => {
-    setProductId(id);
-    setShowDeleteModal(!showDeleteModal);
-  };
   const { products, loading, error, actionType } = useSelector(
     (state) => state.products
   );
@@ -30,6 +25,27 @@ const ProductList = () => {
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [modalType, setModalType] = useState(null);
+  const [productId, setProductId] = useState(null);
+
+  const toggleDeleteModal = (id) => {
+    setProductId(id);
+    setShowDeleteModal(!showDeleteModal);
+  };
+
+  const toggleUpdateModal = (id) => {
+    setModalType("update");
+    setProductId(id);
+    setShowUpdateModal(!showUpdateModal);
+  };
+
+  const toggleCreateModal = () => {
+    setModalType("create");
+    setShowUpdateModal(!showUpdateModal);
+  };
 
   const handleDelete = (id) => {
     dispatch(deleteProduct(id));
@@ -68,7 +84,12 @@ const ProductList = () => {
       Header: "Actions",
       Cell: ({ row }) => (
         <div className="d-flex">
-          <button className="btn btn-primary me-2">
+          <button
+            onClick={() => {
+              toggleUpdateModal(row.original.id);
+            }}
+            className="btn btn-primary me-2"
+          >
             <PencilFill />
           </button>
           <button
@@ -121,7 +142,9 @@ const ProductList = () => {
             />
           </div>
         </div>
-        <button className="btn light-green btn-md">Add New Product</button>
+        <button onClick={toggleCreateModal} className="btn light-green btn-md">
+          Add New Product
+        </button>
       </div>
 
       <div className="table-responsive">
@@ -166,11 +189,18 @@ const ProductList = () => {
           <tbody {...getTableBodyProps()}>
             {rows.map((row) => {
               prepareRow(row);
+              const { key, ...restRowProps } = row.getRowProps();
+
               return (
-                <tr {...row.getRowProps()}>
-                  {row.cells.map((cell) => (
-                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                  ))}
+                <tr key={key} {...restRowProps}>
+                  {row.cells.map((cell) => {
+                    const { key, ...restCellProps } = cell.getCellProps();
+                    return (
+                      <td key={key} {...restCellProps}>
+                        {cell.render("Cell")}
+                      </td>
+                    );
+                  })}
                 </tr>
               );
             })}
@@ -179,10 +209,19 @@ const ProductList = () => {
       </div>
       <DeleteModal
         show={showDeleteModal}
-        loading={actionType === "delete" && loading}
+        loading={loading}
         handleDelete={handleDelete}
         cancel={toggleDeleteModal}
         productId={productId}
+      />
+
+      <UpdateProductModal
+        show={showUpdateModal}
+        loading={loading}
+        cancel={toggleUpdateModal}
+        productId={productId}
+        isUpdate={true}
+        modalType={modalType}
       />
     </>
   );

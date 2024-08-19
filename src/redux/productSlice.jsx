@@ -88,9 +88,17 @@ const productSlice = createSlice({
         state.actionType = "update";
       })
       .addCase(updateProduct.fulfilled, (state, action) => {
-        state.products = state.products.map((product) =>
-          product.id === action.payload.id ? action.payload : product
-        );
+        state.products = state.products.map((product) => {
+          //data dont have rating so we need to keep the rating
+          if (product.id === action.payload.id) {
+            return {
+              ...action.payload,
+              rating: product.rating,
+            };
+          }
+          return product;
+        });
+
         state.loading = false;
         state.actionType = "update";
       })
