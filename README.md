@@ -7,7 +7,7 @@ To test the application, you can use the following credentials:
 - **Email**: `test@mail.com`
 - **Password**: `Test1234`
 
-Alternatively, you can log in with your Google account
+Alternatively, you can log in with your Google account or create your own account.
 ## Project Details
 
 ### 1. Authentication
