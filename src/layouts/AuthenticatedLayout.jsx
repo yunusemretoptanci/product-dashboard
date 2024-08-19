@@ -37,7 +37,7 @@ function AuthenticatedLayout() {
           </button>
         </div>
       </nav>
-      <main className="container pt-5 mt-5">
+      <main className="container pt-5">
         <Outlet />
       </main>
     </div>

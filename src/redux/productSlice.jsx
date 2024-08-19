@@ -7,6 +7,17 @@ const BASE_URL = "https://fakestoreapi.com/products";
 // Define initial state
 const initialState = {
   products: [],
+  selectedProduct: {
+    title: "",
+    price: 0,
+    description: "",
+    category: "",
+    rating: {
+      rate: 0,
+      count: 0,
+    },
+    image: "",
+  },
   loading: false,
   error: null,
   actionType: null,
@@ -42,6 +53,14 @@ export const deleteProduct = createAsyncThunk(
   async (id) => {
     await axios.delete(`${BASE_URL}/${id}`);
     return id;
+  }
+);
+
+export const fetchProductDetail = createAsyncThunk(
+  "products/fetchProductDetail",
+  async (id) => {
+    const response = await axios.get(`${BASE_URL}/${id}`);
+    return response.data;
   }
 );
 
@@ -123,6 +142,19 @@ const productSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
         state.actionType = "delete";
+      })
+
+      .addCase(fetchProductDetail.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchProductDetail.fulfilled, (state, action) => {
+        state.selectedProduct = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchProductDetail.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
       });
   },
 });

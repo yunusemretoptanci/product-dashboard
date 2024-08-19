@@ -16,7 +16,7 @@ function App() {
           <Route path="/dashboard" element={<AuthenticatedLayout />}>
             <Route path="register" element={<RegisterPage />} />
             <Route path="product-list" element={<ProductList />} />
-            <Route path="product-detail" element={<ProductDetail />} />
+            <Route path="product-detail/:id" element={<ProductDetail />} />
           </Route>
         </Routes>
       </Router>

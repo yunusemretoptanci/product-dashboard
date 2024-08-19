@@ -10,6 +10,7 @@ import {
 } from "react-bootstrap-icons";
 import Spinner from "../../../components/Spinner";
 import "./styles.css";
+import { useNavigate } from "react-router-dom";
 
 const ProductTable = ({
   products,
@@ -69,7 +70,9 @@ const ProductTable = ({
           <button
             title="View"
             className="btn btn-warning ms-2"
-            onClick={() => console.log(row.original.id)}
+            onClick={() =>
+              navigate(`/dashboard/product-detail/${row.original.id}`)
+            }
           >
             <ArrowRightCircleFill className="text-white" />
           </button>
@@ -78,7 +81,7 @@ const ProductTable = ({
       disableSortBy: true,
     },
   ];
-
+  const navigate = useNavigate();
   const columns = useMemo(() => COLUMNS, []);
   const data = useMemo(() => products, [products]);
 
@@ -90,39 +93,45 @@ const ProductTable = ({
     state,
     prepareRow,
   } = useTable({ columns, data }, useGlobalFilter, useSortBy);
- state.globalFilter = globalFilter;
+  state.globalFilter = globalFilter;
 
   return (
     <div className="table-responsive">
       <table {...getTableProps()} className="table table-striped">
         <thead>
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                  {column.render("Header")}
-                  {column.canSort ? (
-                    <span className="ms-1">
-                      {column.isSorted ? (
-                        column.isSortedDesc ? (
-                          <SortUp />
-                        ) : (
-                          <SortDown />
-                        )
-                      ) : (
-                        <Filter />
-                      )}
-                    </span>
-                  ) : null}
-                </th>
-              ))}
-            </tr>
-          ))}
+          {headerGroups.map((headerGroup) => {
+            const { key, ...restHeaderGroupProps } = headerGroup.getHeaderGroupProps();
+            return (
+              <tr key={key} {...restHeaderGroupProps}>
+                {headerGroup.headers.map((column) => {
+                  const { key, ...restColumn } = column.getHeaderProps(column.getSortByToggleProps());
+                  return (
+                    <th key={key} {...restColumn}>
+                      {column.render("Header")}
+                      {column.canSort ? (
+                        <span className="ms-1">
+                          {column.isSorted ? (
+                            column.isSortedDesc ? (
+                              <SortUp />
+                            ) : (
+                              <SortDown />
+                            )
+                          ) : (
+                            <Filter />
+                          )}
+                        </span>
+                      ) : null}
+                    </th>
+                  );
+                })}
+              </tr>
+            );
+          })}
         </thead>
         {loading && actionType === "fetch" && (
           <tbody>
             <tr>
-              <td colSpan={6} className="text-center">
+              <td colSpan={headerGroups[0].headers.length} className="text-center">
                 <Spinner />
               </td>
             </tr>
@@ -131,11 +140,17 @@ const ProductTable = ({
         <tbody {...getTableBodyProps()}>
           {rows.map((row) => {
             prepareRow(row);
+            const { key, ...restRowProps } = row.getRowProps();
             return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map((cell) => (
-                  <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                ))}
+              <tr key={key} {...restRowProps}>
+                {row.cells.map((cell) => {
+                  const { key, ...restCellProps } = cell.getCellProps();
+                  return (
+                    <td key={key} {...restCellProps}>
+                      {cell.render("Cell")}
+                    </td>
+                  );
+                })}
               </tr>
             );
           })}
@@ -143,6 +158,7 @@ const ProductTable = ({
       </table>
     </div>
   );
+  
 };
 
 export default ProductTable;
