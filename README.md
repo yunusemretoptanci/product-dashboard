@@ -38,7 +38,7 @@ Alternatively, you can log in with your Google account
    npm install
 4. Start the application:
    ```bash
-   npm dev
+   npm run dev
 ---
 
 
