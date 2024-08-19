@@ -1,11 +1,11 @@
 import Spinner from "./Spinner";
 import { deleteProduct } from "@/redux/productSlice"; // Path to your productSlice
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-function DeleteModal({ show, loading, cancel, productId }) {
+function DeleteModal({ show, cancel, productId }) {
   if (!show) return null;
   const dispatch = useDispatch();
-
+  const { loading } = useSelector((state) => state.products);
   const handleDelete = async () => {
     await dispatch(deleteProduct(productId));
     cancel();

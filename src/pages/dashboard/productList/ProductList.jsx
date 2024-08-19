@@ -1,18 +1,9 @@
-// components/ProductList.js
-import { useMemo, useEffect, useState } from "react";
-import { useTable, useGlobalFilter, useSortBy } from "react-table";
-import { useSelector, useDispatch } from "react-redux";
-import { fetchProducts, deleteProduct } from "@/redux/productSlice"; // Path to your productSlice
-import {
-  Filter,
-  SortDown,
-  SortUp,
-  Search,
-  PencilFill,
-  TrashFill,
-} from "react-bootstrap-icons";
-import "./styles.css";
-import Spinner from "../../../components/Spinner";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProducts, deleteProduct } from "@/redux/productSlice";
+import SearchBar from "./SearchBar";
+import AddProductButton from "./AddProductButton";
+import ProductTable from "./ProductTable";
 import DeleteModal from "../../../components/DeleteModal";
 import UpdateProductModal from "../../../components/ProductFormModal";
 
@@ -22,14 +13,15 @@ const ProductList = () => {
     (state) => state.products
   );
 
-  useEffect(() => {
-    dispatch(fetchProducts());
-  }, [dispatch]);
-
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [modalType, setModalType] = useState(null);
   const [productId, setProductId] = useState(null);
+  const [globalFilter, setGlobalFilter] = useState("");
+
+  useEffect(() => {
+    dispatch(fetchProducts());
+  }, [dispatch]);
 
   const toggleDeleteModal = (id) => {
     setProductId(id);
@@ -51,165 +43,28 @@ const ProductList = () => {
     dispatch(deleteProduct(id));
   };
 
-  const COLUMNS = [
-    {
-      Header: "Title",
-      accessor: "title",
-    },
-    {
-      Header: "Price",
-      accessor: "price",
-    },
-    {
-      Header: "Category",
-      accessor: "category",
-    },
-    {
-      Header: "Image",
-      accessor: "image",
-      disableSortBy: true, // Disable sorting for image column
-      Cell: ({ value }) => (
-        <img
-          src={value}
-          alt="Product"
-          style={{ width: "50px", height: "50px" }}
-        />
-      ),
-    },
-    {
-      Header: "Rating",
-      accessor: "rating.rate",
-    },
-    {
-      Header: "Actions",
-      Cell: ({ row }) => (
-        <div className="d-flex">
-          <button
-            onClick={() => {
-              toggleUpdateModal(row.original.id);
-            }}
-            className="btn btn-primary me-2"
-          >
-            <PencilFill />
-          </button>
-          <button
-            className="btn btn-danger"
-            onClick={() => {
-              toggleDeleteModal(row.original.id);
-            }}
-          >
-            <TrashFill />
-          </button>
-        </div>
-      ),
-      disableSortBy: true, // Disable sorting for actions column
-    },
-  ];
-
-  const columns = useMemo(() => COLUMNS, []);
-  const data = useMemo(() => products, [products]);
-
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    state,
-    setGlobalFilter,
-    prepareRow,
-  } = useTable({ columns, data }, useGlobalFilter, useSortBy);
-
-  const { globalFilter } = state;
-
   return (
     <>
-      <div className="mb-3 d-flex justify-content-between align-items-center">
-        <div>
-          <div className="input-group mb-3">
-            <span
-              className="input-group-text border-0 bg-gray-light"
-              id="basic-addon1"
-            >
-              <Search />
-            </span>
-            <input
-              type="text"
-              value={globalFilter || ""}
-              onChange={(e) => setGlobalFilter(e.target.value)}
-              className="form-control border-0 bg-gray-light fw-semibold"
-              placeholder="Search a product"
-              aria-label="Search"
-            />
-          </div>
-        </div>
-        <button onClick={toggleCreateModal} className="btn light-green btn-md">
-          Add New Product
-        </button>
+      <div className="mb-3 d-flex flex-md-row flex-column flex-column-reverse justify-content-between align-items-center">
+        <SearchBar
+          globalFilter={globalFilter}
+          setGlobalFilter={setGlobalFilter}
+        />
+        <AddProductButton toggleCreateModal={toggleCreateModal} />
       </div>
 
-      <div className="table-responsive">
-        <table {...getTableProps()} className="table table-striped">
-          <thead>
-            {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
-                  <th
-                    className=""
-                    {...column.getHeaderProps(column.getSortByToggleProps())}
-                  >
-                    {column.render("Header")}
-                    {column.canSort ? (
-                      <span className="ms-1  ">
-                        {column.isSorted ? (
-                          column.isSortedDesc ? (
-                            <SortUp />
-                          ) : (
-                            <SortDown />
-                          )
-                        ) : (
-                          <Filter />
-                        )}
-                      </span>
-                    ) : null}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          {loading && actionType === "fetch" && (
-            <tbody>
-              <tr>
-                <td colSpan={6} className="text-center">
-                  <Spinner />
-                </td>
-              </tr>
-            </tbody>
-          )}
+      <ProductTable
+        products={products}
+        loading={loading}
+        actionType={actionType}
+        globalFilter={globalFilter}
+        se
+        toggleUpdateModal={toggleUpdateModal}
+        toggleDeleteModal={toggleDeleteModal}
+      />
 
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row) => {
-              prepareRow(row);
-              const { key, ...restRowProps } = row.getRowProps();
-
-              return (
-                <tr key={key} {...restRowProps}>
-                  {row.cells.map((cell) => {
-                    const { key, ...restCellProps } = cell.getCellProps();
-                    return (
-                      <td key={key} {...restCellProps}>
-                        {cell.render("Cell")}
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
       <DeleteModal
         show={showDeleteModal}
-        loading={loading}
         handleDelete={handleDelete}
         cancel={toggleDeleteModal}
         productId={productId}
@@ -217,7 +72,6 @@ const ProductList = () => {
 
       <UpdateProductModal
         show={showUpdateModal}
-        loading={loading}
         cancel={toggleUpdateModal}
         productId={productId}
         isUpdate={true}

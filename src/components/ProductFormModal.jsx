@@ -14,11 +14,10 @@ const validationSchema = Yup.object({
   image: Yup.string().url("Invalid URL").required("Image URL is required"),
 });
 
-function ProductFormModal({ show, loading, cancel, productId, modalType }) {
+function ProductFormModal({ show, cancel, productId, modalType }) {
   if (!show) return null;
-  console.log(loading)
   const dispatch = useDispatch();
-  const { products } = useSelector((state) => state.products);
+  const { products,loading } = useSelector((state) => state.products);
   console.log(products);
   const product = products.find((product) => product.id === productId);
 
