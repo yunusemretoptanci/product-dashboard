@@ -2,6 +2,12 @@
 
 This project is a fully responsive application that features authentication with Auth0, API integrations using Redux Toolkit, and a user interface designed with Bootstrap 5. It also incorporates React Router for routing and React Table for table functionalities.
 
+To test the application, you can use the following credentials:
+
+- **Email**: `test@mail.com`
+- **Password**: `Test1234`
+
+Alternatively, you can log in with your Google account
 ## Project Details
 
 ### 1. Authentication
